@@ -1,5 +1,5 @@
-function Landing() {
+function LandingPage() {
   return <div>Landing</div>;
 }
 
-export default Landing;
+export default LandingPage;

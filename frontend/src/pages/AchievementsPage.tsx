@@ -1,6 +1,6 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 
-const Achievements = () => {
+const AchievementsPage = () => {
   return (
     <DashboardLayout>
       <div className="text-2xl font-semibold">Achievements</div>
@@ -8,4 +8,4 @@ const Achievements = () => {
   );
 };
 
-export default Achievements;
+export default AchievementsPage;

@@ -1,11 +1,11 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 
-const Markets = () => {
+const PortfolioPage = () => {
   return (
     <DashboardLayout>
-      <div className="text-2xl font-semibold">Markets</div>
+      <div className="text-2xl font-semibold">Portfolio</div>
     </DashboardLayout>
   );
 };
 
-export default Markets;
+export default PortfolioPage;

@@ -1,6 +1,6 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 
-const Community = () => {
+const CommunityPage = () => {
   return (
     <DashboardLayout>
       <div className="text-2xl font-semibold">Community</div>
@@ -8,4 +8,4 @@ const Community = () => {
   );
 };
 
-export default Community;
+export default CommunityPage;
