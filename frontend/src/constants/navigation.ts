@@ -2,6 +2,7 @@ export const dashboardNavItems = [
   { label: "Dashboard", path: "/dashboard" },
   { label: "Markets", path: "/markets" },
   { label: "Portfolio", path: "/portfolio" },
+  { label: "Leaderboard", path: "/leaderboard" },
   { label: "Community", path: "/community" },
   { label: "Achievements", path: "/achievements" },
 ];

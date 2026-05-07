@@ -10,6 +10,8 @@ import AdminPage from "../pages/AdminPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import AdminModerationPage from "../pages/AdminModerationPage";
 import AdminResolutionPage from "../pages/AdminResolutionPage";
+import MarketDetailsPage from "../pages/MarketDetailsPage";
+import LeaderboardPage from "../pages/LeaderboardPage";
 
 const AppRouter = () => {
   return (
@@ -19,7 +21,10 @@ const AppRouter = () => {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/markets" element={<MarketsPage />} />
+        <Route path="/markets/:marketId" element={<MarketDetailsPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/achievements" element={<AchievementsPage />} />
         <Route path="/admin" element={<AdminPage />} />

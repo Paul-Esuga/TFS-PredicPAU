@@ -15,7 +15,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <main className="min-h-screen flex-1">
           <Topbar />
 
-          <section className="p-6">{children}</section>
+          <section className="px-7 py-16">{children}</section>
         </main>
       </div>
     </div>
