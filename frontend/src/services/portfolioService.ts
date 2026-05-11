@@ -12,8 +12,7 @@ import type {
   TradeHistoryEntry,
   PayoutEntry,
 } from "../types/portfolio";
-
-// Simulating async API calls — swap these out for real fetch calls when backend is ready
+import { tradeStore } from "../store/tradeStore"; // NEW
 
 export const portfolioService = {
   getSummary: (): Promise<PortfolioSummary> => {
@@ -29,7 +28,9 @@ export const portfolioService = {
   },
 
   getTradeHistory: (): Promise<TradeHistoryEntry[]> => {
-    return Promise.resolve(mockTradeHistory);
+    // NEW — session trades appear at the top, mock trades follow
+    const combined = [...tradeStore.getTrades(), ...mockTradeHistory];
+    return Promise.resolve(combined);
   },
 
   getPayouts: (): Promise<PayoutEntry[]> => {
