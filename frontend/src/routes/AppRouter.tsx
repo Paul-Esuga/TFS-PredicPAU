@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import LandingPage from "../pages/LandingPage";
 import SignupPage from "../pages/SignupPage";
 import DashboardPage from "../pages/DashboardPage";
@@ -17,7 +17,8 @@ const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/landing" element={<LandingPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/markets" element={<MarketsPage />} />
@@ -28,9 +29,9 @@ const AppRouter = () => {
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/achievements" element={<AchievementsPage />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="*" element={<NotFoundPage />} />
         <Route path="/admin/resolution" element={<AdminResolutionPage />} />
         <Route path="/admin/moderation" element={<AdminModerationPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

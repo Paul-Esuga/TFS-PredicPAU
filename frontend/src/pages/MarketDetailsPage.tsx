@@ -119,10 +119,11 @@ const PriceChart = ({ data }: { data: { time: string; value: number }[] }) => (
           width={40}
         />
         <Tooltip
-          formatter={(value: number) => [
-            `${Math.round(value * 100)}%`,
-            "YES Price",
-          ]}
+          formatter={(value) => {
+            const numeric = typeof value === "number" ? value : Number(value);
+            if (!Number.isFinite(numeric)) return ["—", "YES Price"];
+            return [`${Math.round(numeric * 100)}%`, "YES Price"];
+          }}
           contentStyle={{
             backgroundColor: "#1e293b",
             border: "none",

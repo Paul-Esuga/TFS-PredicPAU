@@ -1,8 +1,8 @@
-import { mockCurrentUser } from "../mocks/user";
 import type { User } from "../types/user";
+import { apiFetch } from "./apiClient";
 
 export const userService = {
   async getCurrentUser(): Promise<User> {
-    return Promise.resolve(mockCurrentUser);
+    return apiFetch<User>("/api/users/me");
   },
 };

@@ -1,30 +1,22 @@
-import {
-  mockAchievementSummary,
-  mockRewardProgress,
-  mockBadges,
-} from "../mocks/achievementMocks";
 import type {
   Badge,
   BadgeFilter,
   RewardProgress,
   AchievementSummary,
 } from "../types/achievement";
+import { apiFetch } from "../../../services/apiClient";
 
 export const achievementService = {
   getSummary: (): Promise<AchievementSummary> => {
-    return Promise.resolve(mockAchievementSummary);
+    return apiFetch<AchievementSummary>("/api/achievements/summary");
   },
 
   getRewardProgress: (): Promise<RewardProgress> => {
-    return Promise.resolve(mockRewardProgress);
+    return apiFetch<RewardProgress>("/api/achievements/progress");
   },
 
   getBadges: (filter: BadgeFilter = "all"): Promise<Badge[]> => {
-    const filtered =
-      filter === "all"
-        ? mockBadges
-        : mockBadges.filter((badge) => badge.status === filter);
-
-    return Promise.resolve(filtered);
+    const query = new URLSearchParams({ filter }).toString();
+    return apiFetch<Badge[]>(`/api/achievements/badges?${query}`);
   },
 };
