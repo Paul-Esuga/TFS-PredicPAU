@@ -1,12 +1,17 @@
-import { mockMarkets } from "../mocks/markets";
 import type { Market } from "../types/market";
+import { apiFetch, ApiError } from "./apiClient";
 
 export const marketService = {
   async getAllMarkets(): Promise<Market[]> {
-    return Promise.resolve(mockMarkets);
+    return apiFetch<Market[]>("/api/markets");
   },
 
   async getMarketById(id: string): Promise<Market | undefined> {
-    return Promise.resolve(mockMarkets.find((market) => market.id === id));
+    try {
+      return await apiFetch<Market>(`/api/markets/${id}`);
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) return undefined;
+      throw e;
+    }
   },
 };

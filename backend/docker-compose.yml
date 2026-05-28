@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: predicpau
+    ports:
+      - "5432:5432"
+    volumes:
+      - predicpau_pg:/var/lib/postgresql/data
+
+volumes:
+  predicpau_pg:

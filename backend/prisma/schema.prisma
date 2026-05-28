@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TradeSide {
+  yes
+  no
+}
+
+enum TradeStatus {
+  open
+  closed
+}
+
+enum MarketLiquidity {
+  low
+  medium
+  high
+}
+
+enum MarketStatus {
+  open
+  closed
+  resolved
+}
+
+enum MarketCategory {
+  sports
+  campus
+  academics
+  finance
+  entertainment
+}
+
+model User {
+  id        String   @id
+  fullName  String
+  username  String
+  email     String
+  avatarUrl String?
+  balance   Float
+
+  trades    Trade[]
+  balanceRow UserBalance?
+}
+
+model UserBalance {
+  userId    String @id
+  available Float
+
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Market {
+  id          String         @id
+  title       String
+  category    MarketCategory
+  description String
+  yesPrice    Float
+  noPrice     Float
+  volume      Float
+  liquidity   MarketLiquidity
+  closesAt    DateTime
+  status      MarketStatus
+
+  detail      MarketDetail?
+}
+
+model MarketDetail {
+  marketId      String   @id
+  title         String
+  category      String
+  subcategory   String
+  description   String
+  yesOdds       Float
+  noOdds        Float
+  yesOddsChange Float
+  noOddsChange  Float
+  volume        Float
+  expiresIn     String
+  status        MarketStatus
+  chartData     Json
+
+  market        Market    @relation(fields: [marketId], references: [id], onDelete: Cascade)
+}
+
+model Trade {
+  id             String      @id
+  userId         String
+  marketId       String?
+  marketTitle    String
+  side           TradeSide
+  amountInvested Float
+  sharePrice     Float
+  executedAt     String
+  status         TradeStatus
+  createdAt      DateTime    @default(now())
+
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
