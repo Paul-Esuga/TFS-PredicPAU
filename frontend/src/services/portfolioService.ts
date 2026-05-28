@@ -1,10 +1,3 @@
-import {
-  mockActivePositions,
-  mockClosedPositions,
-  mockPortfolioSummary,
-  mockTradeHistory,
-  mockPayouts,
-} from "../mocks/portfolioMocks";
 import type {
   ActivePosition,
   ClosedPosition,
@@ -12,28 +5,26 @@ import type {
   TradeHistoryEntry,
   PayoutEntry,
 } from "../types/portfolio";
-import { tradeStore } from "../store/tradeStore"; // NEW
+import { apiFetch } from "./apiClient";
 
 export const portfolioService = {
   getSummary: (): Promise<PortfolioSummary> => {
-    return Promise.resolve(mockPortfolioSummary);
+    return apiFetch<PortfolioSummary>("/api/portfolio/summary");
   },
 
   getActivePositions: (): Promise<ActivePosition[]> => {
-    return Promise.resolve(mockActivePositions);
+    return apiFetch<ActivePosition[]>("/api/portfolio/positions/active");
   },
 
   getClosedPositions: (): Promise<ClosedPosition[]> => {
-    return Promise.resolve(mockClosedPositions);
+    return apiFetch<ClosedPosition[]>("/api/portfolio/positions/closed");
   },
 
   getTradeHistory: (): Promise<TradeHistoryEntry[]> => {
-    // NEW — session trades appear at the top, mock trades follow
-    const combined = [...tradeStore.getTrades(), ...mockTradeHistory];
-    return Promise.resolve(combined);
+    return apiFetch<TradeHistoryEntry[]>("/api/portfolio/trades");
   },
 
   getPayouts: (): Promise<PayoutEntry[]> => {
-    return Promise.resolve(mockPayouts);
+    return apiFetch<PayoutEntry[]>("/api/portfolio/payouts");
   },
 };
