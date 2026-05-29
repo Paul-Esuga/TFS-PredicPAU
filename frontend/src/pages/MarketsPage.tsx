@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { marketService } from "../services/marketService";
 import type { Market, MarketCategory } from "../types/market";
@@ -7,9 +8,8 @@ import FeaturedMarket from "../components/cards/FeaturedMarket";
 import RewardsCard from "../components/cards/RewardsCard";
 import QuickStatsCard from "../components/cards/QuickStatsCard";
 
-// ─── Filter config ────────────────────────────────────────────────────────────
-
 type FilterOption = "all" | MarketCategory;
+type SortOption = "volume" | "newest" | "closing";
 
 const FILTERS: { label: string; value: FilterOption }[] = [
   { label: "All Markets", value: "all" },
@@ -20,43 +20,58 @@ const FILTERS: { label: string; value: FilterOption }[] = [
   { label: "Entertainment", value: "entertainment" },
 ];
 
-type SortOption = "volume" | "newest" | "closing";
-
 const SORTS: { label: string; value: SortOption }[] = [
   { label: "Highest Volume", value: "volume" },
   { label: "Newest", value: "newest" },
   { label: "Closing Soon", value: "closing" },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const applySearch = (markets: Market[], query: string): Market[] => {
+  if (!query.trim()) return markets;
+
+  const lower = query.toLowerCase();
+
+  return markets.filter(
+    (m) =>
+      m.title.toLowerCase().includes(lower) ||
+      m.category.toLowerCase().includes(lower) ||
+      m.description.toLowerCase().includes(lower),
+  );
+};
 
 const applyFilter = (markets: Market[], filter: FilterOption): Market[] => {
   if (filter === "all") return markets;
+
   return markets.filter((m) => m.category === filter);
 };
 
 const applySort = (markets: Market[], sort: SortOption): Market[] => {
   const copy = [...markets];
+
   if (sort === "volume") {
     return copy.sort((a, b) => b.volume - a.volume);
   }
+
   if (sort === "closing") {
     return copy.sort(
       (a, b) => new Date(a.closesAt).getTime() - new Date(b.closesAt).getTime(),
     );
   }
-  // newest — reverse default order
+
   return copy.reverse();
 };
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
-
 const MarketsPage = () => {
+  const [searchParams] = useSearchParams();
+
   const [markets, setMarkets] = useState<Market[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterOption>("all");
   const [activeSort, setActiveSort] = useState<SortOption>("volume");
   const [visibleCount, setVisibleCount] = useState(9);
   const [loading, setLoading] = useState(true);
+
+  // Read search query from URL param
+  const searchQuery = searchParams.get("q") ?? "";
 
   useEffect(() => {
     marketService.getAllMarkets().then((data) => {
@@ -65,34 +80,53 @@ const MarketsPage = () => {
     });
   }, []);
 
-  // Reset visible count when filter changes
   const handleFilterChange = (filter: FilterOption) => {
     setActiveFilter(filter);
     setVisibleCount(9);
   };
 
-  const filtered = applyFilter(markets, activeFilter);
+  const searched = applySearch(markets, searchQuery);
+  const filtered = applyFilter(searched, activeFilter);
   const sorted = applySort(filtered, activeSort);
+
   const visible = sorted.slice(0, visibleCount);
+
   const hasMore = visibleCount < sorted.length;
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* ── Top section ── */}
+        {/* Top section */}
         <div className="grid gap-4 md:grid-cols-3">
           <div className="md:col-span-2">
             <FeaturedMarket />
           </div>
+
           <div className="space-y-4">
             <RewardsCard />
             <QuickStatsCard />
           </div>
         </div>
 
-        {/* ── Filters + Sort ── */}
+        {/* Search result banner */}
+        {searchQuery && (
+          <div className="flex items-center justify-between rounded-2xl border border-blue-100 bg-blue-50 px-5 py-3">
+            <p className="text-sm text-blue-700">
+              Showing results for{" "}
+              <span className="font-semibold">"{searchQuery}"</span>
+            </p>
+
+            <a
+              href="/markets"
+              className="text-xs font-semibold text-blue-500 hover:text-blue-700"
+            >
+              Clear search
+            </a>
+          </div>
+        )}
+
+        {/* Filters + Sort */}
         <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Category filters */}
           <div className="flex flex-wrap gap-2">
             {FILTERS.map((f) => (
               <button
@@ -109,9 +143,9 @@ const MarketsPage = () => {
             ))}
           </div>
 
-          {/* Sort dropdown */}
           <div className="flex items-center gap-2">
             <span className="text-sm text-slate-400">Sort by:</span>
+
             <select
               value={activeSort}
               onChange={(e) => setActiveSort(e.target.value as SortOption)}
@@ -126,21 +160,30 @@ const MarketsPage = () => {
           </div>
         </div>
 
-        {/* ── Result count ── */}
+        {/* Result count */}
         {!loading && (
           <p className="text-xs text-slate-400">
             Showing {visible.length} of {sorted.length} markets
+            {searchQuery && ` matching "${searchQuery}"`}
           </p>
         )}
 
-        {/* ── Market grid ── */}
+        {/* Market grid */}
         {loading ? (
           <div className="flex h-48 items-center justify-center text-slate-400">
             Loading markets...
           </div>
         ) : visible.length === 0 ? (
-          <div className="flex h-48 items-center justify-center text-slate-400">
-            No markets found for this filter.
+          <div className="flex h-48 flex-col items-center justify-center gap-2">
+            <p className="text-4xl">🔍</p>
+
+            <p className="text-sm font-medium text-slate-600">
+              No markets found
+            </p>
+
+            <p className="text-xs text-slate-400">
+              Try a different search term or filter.
+            </p>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-3">
@@ -150,12 +193,12 @@ const MarketsPage = () => {
           </div>
         )}
 
-        {/* ── Load more ── */}
+        {/* Load more */}
         {hasMore && (
           <div className="flex justify-center">
             <button
               onClick={() => setVisibleCount((prev) => prev + 9)}
-              className="rounded-full border border-slate-200 px-6 py-2 text-sm font-medium text-slate-500 hover:bg-slate-50 transition-colors"
+              className="rounded-full border border-slate-200 px-6 py-2 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-50"
             >
               Load More Active Markets
             </button>

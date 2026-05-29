@@ -3,6 +3,7 @@ import { CheckCircle, ArrowRight, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import type { MarketDetail, TradeSide, TradeStatus } from "../../types/trade";
 import { marketDetailService } from "../../features/markets/services/marketDetailService";
+import { balanceStore } from "../../store/balanceStore";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -171,7 +172,10 @@ const TradePanel = ({
       });
 
       setTradeStatus("success");
-      onTradeSuccess(userBalance - result.amountInvested);
+
+      // Update the shared balance store so Topbar reflects the deduction instantly
+      balanceStore.deduct(result.amountInvested);
+      onTradeSuccess(balanceStore.getBalance());
 
       toast.success(
         `Trade placed! You bought ${result.sharesReceived.toLocaleString()} shares.`,

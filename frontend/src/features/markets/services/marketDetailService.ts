@@ -1,67 +1,38 @@
-import {
-  mockMarketDetails,
-  mockUserBalance,
-  mockTradeResult,
-} from "../mocks/marketDetailMocks";
 import type {
   MarketDetail,
   TradeOrder,
   TradeResult,
   UserBalance,
 } from "../../../types/trade";
+import { apiFetch } from "../../../services/apiClient";
 import { tradeStore } from "../../../store/tradeStore";
 
 export const marketDetailService = {
   getMarketById: (marketId: string): Promise<MarketDetail> => {
-    const market = mockMarketDetails[marketId];
-
-    if (!market) {
-      return Promise.reject(new Error(`Market ${marketId} not found`));
-    }
-
-    return Promise.resolve(market);
+    return apiFetch<MarketDetail>(`/api/markets/${marketId}/details`);
   },
 
   getUserBalance: (): Promise<UserBalance> => {
-    return Promise.resolve(mockUserBalance);
+    return apiFetch<UserBalance>("/api/users/me/balance");
   },
 
-  executeTrade: (order: TradeOrder): Promise<TradeResult> => {
-    const market = mockMarketDetails[order.marketId];
+  executeTrade: async (order: TradeOrder): Promise<TradeResult> => {
+    const result = await apiFetch<TradeResult>("/api/trades/execute", {
+      method: "POST",
+      body: JSON.stringify(order),
+    });
 
-    if (!market) {
-      return Promise.reject(new Error(`Market ${order.marketId} not found`));
-    }
-
-    if (order.amount <= 0) {
-      return Promise.reject(new Error("Trade amount must be greater than 0"));
-    }
-
-    if (order.amount > mockUserBalance.available) {
-      return Promise.reject(new Error("Insufficient balance"));
-    }
-
-    mockUserBalance.available -= order.amount;
-
-    const pricePerShare = order.side === "yes" ? market.yesOdds : market.noOdds;
-
-    const result = mockTradeResult(
-      order.marketId,
-      order.side,
-      order.amount,
-      pricePerShare,
-    );
-
+    // Record in session store so portfolio history picks it up immediately
     tradeStore.addTrade({
       id: result.id,
-      marketTitle: market.title,
+      marketTitle: order.marketId, // will be resolved by portfolio service
       side: order.side,
       amountInvested: order.amount,
-      sharePrice: pricePerShare,
-      executedAt: new Date().toLocaleString(),
+      sharePrice: result.pricePerShare,
+      executedAt: result.executedAt,
       status: "open",
     });
 
-    return Promise.resolve(result);
+    return result;
   },
 };

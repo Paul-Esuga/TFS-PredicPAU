@@ -5,6 +5,8 @@ import DashboardPerformanceChart from "../components/dashboard/DashboardPerforma
 import DashboardUpcomingEvents from "../components/dashboard/DashboardUpcomingEvents";
 import DashboardRecentPositions from "../components/dashboard/DashboardRecentPositions";
 import { dashboardService } from "../services/dashboardService";
+import { balanceStore } from "../store/balanceStore";
+import { apiFetch } from "../services/apiClient";
 import type {
   DashboardSummaryCard,
   UpcomingEvent,
@@ -44,9 +46,18 @@ const DashboardPage = () => {
   const [summaryCards, setSummaryCards] = useState<DashboardSummaryCard[]>([]);
   const [events, setEvents] = useState<UpcomingEvent[]>([]);
   const [positions, setPositions] = useState<RecentPosition[]>([]);
+  const [balance, setBalance] = useState<number>(balanceStore.getBalance());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch real balance and sync with store
+    apiFetch<{ available: number }>("/api/users/me/balance")
+      .then((data) => setBalance(data.available))
+      .catch(() => setBalance(balanceStore.getBalance()));
+
+    // Subscribe to in-session balance changes
+    const unsubscribe = balanceStore.subscribe(setBalance);
+
     Promise.all([
       dashboardService.getSummaryCards(),
       dashboardService.getUpcomingEvents(),
@@ -57,7 +68,16 @@ const DashboardPage = () => {
       setPositions(positionData);
       setLoading(false);
     });
+
+    return unsubscribe;
   }, []);
+
+  // Inject live balance into the virtual balance card
+  const liveCards = summaryCards.map((card) =>
+    card.id === "virtual-balance"
+      ? { ...card, value: `₦${balance.toLocaleString()}` }
+      : card,
+  );
 
   if (loading) {
     return (
@@ -74,23 +94,17 @@ const DashboardPage = () => {
       <div className="space-y-6">
         {/* ── Stat Cards ── */}
         <div className="grid gap-4 md:grid-cols-3">
-          {summaryCards.map((card) => (
+          {liveCards.map((card) => (
             <StatCard key={card.id} card={card} />
           ))}
         </div>
 
         {/* ── Main Grid: Chart + Sidebar ── */}
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-          {/* ── Left Column ── */}
           <div className="space-y-6">
-            {/* Performance chart */}
             <DashboardPerformanceChart />
-
-            {/* Recent Positions */}
             <DashboardRecentPositions positions={positions} />
           </div>
-
-          {/* ── Right Column — Upcoming Events ── */}
           <div>
             <DashboardUpcomingEvents events={events} />
           </div>
