@@ -12,6 +12,9 @@
     "test": "vitest run",
     "test:ci": "prisma migrate deploy && vitest run",
     "vercel-build": "prisma generate",
+    "prisma": {
+      "seed": "tsx prisma/seed.ts"
+    },
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio"
