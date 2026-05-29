@@ -8,11 +8,11 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="min-h-screen bg-[#f3f4ff] text-slate-900">
-      <div className="flex">
+    <div className="min-h-screen bg-[#f3f4ff] text-slate-950">
+      <div className="flex min-h-screen">
         <Sidebar />
 
-        <main className="min-h-screen flex-1">
+        <main className="min-w-0 flex-1">
           <Topbar />
 
           <section className="px-7 py-16">{children}</section>

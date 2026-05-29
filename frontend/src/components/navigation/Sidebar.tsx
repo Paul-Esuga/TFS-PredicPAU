@@ -4,14 +4,14 @@ import { dashboardNavItems } from "../../constants/navigation";
 const Sidebar = () => {
   return (
     <aside className="flex min-h-screen w-[290px] shrink-0 flex-col bg-[#020617] text-white">
-      <div className="border-b border-r border-red-400/80 px-10 py-8 text-center">
+      <div className="border-b border-r border-red-400/80 px-8 py-8 text-center">
         <h2 className="text-4xl font-bold tracking-tight text-white">
           PREDICPAU
         </h2>
         <p className="mt-3 text-sm text-blue-200">Student Trader</p>
       </div>
 
-      <nav className="flex-1 space-y-1 px-4 py-6">
+      <nav className="flex-1 space-y-3 px-5 py-7">
         {dashboardNavItems.map((item) => (
           <NavLink
             key={item.path}
@@ -30,7 +30,7 @@ const Sidebar = () => {
         ))}
       </nav>
 
-      <div className="border-t border-white/10 p-4 text-sm text-slate-400">
+      <div className="border-t border-white/10 p-6 text-center text-base text-blue-200">
         Help
       </div>
     </aside>
