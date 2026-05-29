@@ -1,10 +1,3 @@
-import {
-  mockActivePositions,
-  mockClosedPositions,
-  mockPortfolioSummary,
-  mockTradeHistory,
-  mockPayouts,
-} from "../mocks/portfolioMocks";
 import type {
   ActivePosition,
   ClosedPosition,
@@ -12,19 +5,30 @@ import type {
   TradeHistoryEntry,
   PayoutEntry,
 } from "../types/portfolio";
+import { apiFetch } from "./apiClient";
 import { tradeStore } from "../store/tradeStore";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Backend shapes ───────────────────────────────────────────────────────────
 
-// Converts a session TradeHistoryEntry into an ActivePosition so it
-// shows up in the Active Positions tab. currentValue and pnl are flat
-// until the backend provides real valuations.
+interface BackendTrade {
+  id: string;
+  marketId: string | null;
+  marketTitle: string;
+  side: "yes" | "no";
+  amountInvested: number;
+  sharePrice: number;
+  executedAt: string;
+  status: "open" | "closed";
+}
+
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
 const sessionTradeToActivePosition = (
   trade: TradeHistoryEntry,
 ): ActivePosition => ({
   id: trade.id,
-  marketId: trade.id, // best we have without a real marketId on the trade
-  userId: "session-user",
+  marketId: trade.id,
+  userId: "user-1",
   marketTitle: trade.marketTitle,
   marketClosesAt: "Pending resolution",
   side: trade.side,
@@ -39,28 +43,46 @@ const sessionTradeToActivePosition = (
 
 export const portfolioService = {
   getSummary: (): Promise<PortfolioSummary> => {
-    return Promise.resolve(mockPortfolioSummary);
+    return apiFetch<PortfolioSummary>("/api/portfolio/summary");
   },
 
-  getActivePositions: (): Promise<ActivePosition[]> => {
+  getActivePositions: async (): Promise<ActivePosition[]> => {
+    const backendPositions = await apiFetch<ActivePosition[]>(
+      "/api/portfolio/positions/active",
+    );
+
+    // Session trades merged at the top
     const sessionPositions = tradeStore
       .getTrades()
       .map(sessionTradeToActivePosition);
 
-    // Session positions appear at the top, mock positions follow
-    return Promise.resolve([...sessionPositions, ...mockActivePositions]);
+    return [...sessionPositions, ...backendPositions];
   },
 
   getClosedPositions: (): Promise<ClosedPosition[]> => {
-    return Promise.resolve(mockClosedPositions);
+    return apiFetch<ClosedPosition[]>("/api/portfolio/positions/closed");
   },
 
-  getTradeHistory: (): Promise<TradeHistoryEntry[]> => {
-    const combined = [...tradeStore.getTrades(), ...mockTradeHistory];
-    return Promise.resolve(combined);
+  getTradeHistory: async (): Promise<TradeHistoryEntry[]> => {
+    const backendTrades = await apiFetch<BackendTrade[]>(
+      "/api/portfolio/trades",
+    );
+
+    const backendHistory: TradeHistoryEntry[] = backendTrades.map((t) => ({
+      id: t.id,
+      marketTitle: t.marketTitle,
+      side: t.side,
+      amountInvested: t.amountInvested,
+      sharePrice: t.sharePrice,
+      executedAt: t.executedAt,
+      status: t.status,
+    }));
+
+    // Session trades at the top, backend trades follow
+    return [...tradeStore.getTrades(), ...backendHistory];
   },
 
   getPayouts: (): Promise<PayoutEntry[]> => {
-    return Promise.resolve(mockPayouts);
+    return apiFetch<PayoutEntry[]>("/api/portfolio/payouts");
   },
 };

@@ -12,6 +12,8 @@ import AdminModerationPage from "../pages/AdminModerationPage";
 import AdminResolutionPage from "../pages/AdminResolutionPage";
 import MarketDetailsPage from "../pages/MarketDetailsPage";
 import LeaderboardPage from "../pages/LeaderboardPage";
+import HelpPage from "../pages/HelpPage";
+import ProfilePage from "../pages/ProfilePage";
 
 const AppRouter = () => {
   return (
@@ -29,6 +31,8 @@ const AppRouter = () => {
 
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/achievements" element={<AchievementsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/help" element={<HelpPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/resolution" element={<AdminResolutionPage />} />
         <Route path="/admin/moderation" element={<AdminModerationPage />} />

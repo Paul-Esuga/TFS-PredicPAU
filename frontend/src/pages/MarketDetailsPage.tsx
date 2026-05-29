@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   AreaChart,
   Area,
@@ -153,13 +153,67 @@ const LoadingState = () => (
   </DashboardLayout>
 );
 
-const ErrorState = ({ message }: { message: string }) => (
-  <DashboardLayout>
-    <div className="flex h-64 items-center justify-center text-red-400">
-      {message}
-    </div>
-  </DashboardLayout>
-);
+const ErrorState = ({ message }: { message: string }) => {
+  const navigate = useNavigate();
+  const isTradeError = message.includes("trade-");
+
+  return (
+    <DashboardLayout>
+      <div className="flex h-[60vh] flex-col items-center justify-center text-center space-y-4">
+        {/* Greyed out illustration */}
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-100">
+          <svg
+            viewBox="0 0 80 80"
+            className="h-14 w-14"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="40" cy="40" r="38" stroke="#CBD5E1" strokeWidth="2" />
+            <path
+              d="M25 40h30M40 25v30"
+              stroke="#CBD5E1"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <circle cx="40" cy="40" r="10" stroke="#CBD5E1" strokeWidth="2" />
+            <path
+              d="M20 20l40 40"
+              stroke="#CBD5E1"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <p className="text-lg font-bold text-slate-700">
+            {isTradeError ? "Market Unavailable" : "Market Not Found"}
+          </p>
+          <p className="mt-1 max-w-sm text-sm text-slate-400">
+            {isTradeError
+              ? "This position was placed in the current session and doesn't have a dedicated market page yet. Check your portfolio for trade details."
+              : "This market doesn't exist or may have been removed."}
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => navigate("/portfolio")}
+            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+          >
+            View Portfolio
+          </button>
+          <button
+            onClick={() => navigate("/markets")}
+            className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            Browse Markets
+          </button>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+};
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 

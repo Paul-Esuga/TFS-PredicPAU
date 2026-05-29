@@ -3,15 +3,15 @@ import { PrismaClient, TradeSide, TradeStatus } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Seed single dev user (matches frontend mock)
+  // ── User ──────────────────────────────────────────────────────────────────
   const user = await prisma.user.upsert({
     where: { id: "user-1" },
     update: {},
     create: {
       id: "user-1",
-      fullName: "Paul Ezugwu",
+      fullName: "Paul Esuga",
       username: "pau_trader",
-      email: "paul@example.com",
+      email: "paul.esuga@pau.edu.ng",
       balance: 103450,
       balanceRow: {
         create: {
@@ -22,44 +22,162 @@ async function main() {
     include: { balanceRow: true },
   });
 
-  // Markets (matches frontend mock)
+  // ── Markets ───────────────────────────────────────────────────────────────
   const markets = [
     {
       id: "market-1",
-      title: "Will Team Alpha beat Team Beta in the PAU final?",
+      title: "Will Coupe de Escriva Finals go to extra time?",
       category: "sports" as const,
       description:
-        "Prediction market for the upcoming Pan-Atlantic football final.",
-      yesPrice: 0.62,
-      noPrice: 0.38,
-      volume: 24500,
+        "Resolves YES if the Coupe de Escriva Finals match goes beyond 90 minutes of regular time.",
+      yesPrice: 0.64,
+      noPrice: 0.36,
+      volume: 45280,
       liquidity: "high" as const,
-      closesAt: new Date("2026-05-10T15:00:00Z"),
+      closesAt: new Date("2026-06-12T18:00:00Z"),
       status: "open" as const,
     },
     {
       id: "market-2",
-      title: "Will the cafeteria launch the new student meal plan this month?",
-      category: "campus" as const,
+      title: "Will PAU Basketball team win the next home game?",
+      category: "sports" as const,
       description:
-        "Campus operations market based on cafeteria announcements.",
-      yesPrice: 0.41,
-      noPrice: 0.59,
-      volume: 9800,
+        "Resolves YES if the PAU Basketball team wins their next scheduled home game.",
+      yesPrice: 0.59,
+      noPrice: 0.41,
+      volume: 12400,
       liquidity: "medium" as const,
-      closesAt: new Date("2026-05-16T12:00:00Z"),
+      closesAt: new Date("2026-06-15T16:00:00Z"),
       status: "open" as const,
     },
     {
       id: "market-3",
-      title: "Will PAU host an inter-school sports tournament this semester?",
+      title: "Will PAU Volleyball team go undefeated this semester?",
       category: "sports" as const,
-      description: "Market based on official athletics and student affairs updates.",
+      description:
+        "Resolves YES if the PAU Volleyball team wins every match this semester without a single loss.",
+      yesPrice: 0.38,
+      noPrice: 0.62,
+      volume: 8750,
+      liquidity: "low" as const,
+      closesAt: new Date("2026-07-01T12:00:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-4",
+      title: "Will the PAU cafeteria launch the new meal plan this month?",
+      category: "campus" as const,
+      description:
+        "Resolves YES if the cafeteria officially rolls out the new meal plan before the end of the month.",
+      yesPrice: 0.41,
+      noPrice: 0.59,
+      volume: 9800,
+      liquidity: "medium" as const,
+      closesAt: new Date("2026-06-28T23:59:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-5",
+      title: "Will PAU host an inter-school tournament this semester?",
+      category: "campus" as const,
+      description:
+        "Resolves YES if PAU officially announces and hosts an inter-school sports tournament this semester.",
       yesPrice: 0.74,
       noPrice: 0.26,
       volume: 31000,
       liquidity: "high" as const,
-      closesAt: new Date("2026-05-20T18:00:00Z"),
+      closesAt: new Date("2026-08-01T12:00:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-6",
+      title: "Will the PAU Senate election turnout exceed 60%?",
+      category: "campus" as const,
+      description:
+        "Resolves YES if more than 60% of registered PAU students cast a vote in the upcoming senate election.",
+      yesPrice: 0.52,
+      noPrice: 0.48,
+      volume: 7200,
+      liquidity: "medium" as const,
+      closesAt: new Date("2026-06-20T17:00:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-7",
+      title: "Will the second-year macroeconomics midterm average exceed 75%?",
+      category: "academics" as const,
+      description:
+        "Resolves YES if the class average on the macroeconomics midterm is above 75%.",
+      yesPrice: 0.45,
+      noPrice: 0.55,
+      volume: 5400,
+      liquidity: "low" as const,
+      closesAt: new Date("2026-06-18T10:00:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-8",
+      title: "Will PAU introduce AI electives by next academic year?",
+      category: "academics" as const,
+      description:
+        "Resolves YES if PAU officially adds AI or machine learning elective courses to the curriculum.",
+      yesPrice: 0.67,
+      noPrice: 0.33,
+      volume: 4100,
+      liquidity: "low" as const,
+      closesAt: new Date("2026-11-30T12:00:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-9",
+      title: "Will the Naira appreciate below ₦1,400/$ by Q3?",
+      category: "finance" as const,
+      description:
+        "Resolves YES if the official Naira exchange rate drops below ₦1,400 per dollar before Q3 ends.",
+      yesPrice: 0.36,
+      noPrice: 0.64,
+      volume: 22000,
+      liquidity: "high" as const,
+      closesAt: new Date("2026-09-30T23:59:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-10",
+      title: "Will Nigeria's GDP growth exceed 3.5% in 2026?",
+      category: "finance" as const,
+      description:
+        "Resolves YES if Nigeria's official GDP growth figure for 2026 exceeds 3.5% as reported by the NBS.",
+      yesPrice: 0.55,
+      noPrice: 0.45,
+      volume: 18500,
+      liquidity: "medium" as const,
+      closesAt: new Date("2026-12-31T23:59:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-11",
+      title: "Will the PAU End of Year Concert sell out?",
+      category: "entertainment" as const,
+      description:
+        "Resolves YES if all tickets for the PAU End of Year Concert are sold before the event date.",
+      yesPrice: 0.71,
+      noPrice: 0.29,
+      volume: 6300,
+      liquidity: "medium" as const,
+      closesAt: new Date("2026-10-15T20:00:00Z"),
+      status: "open" as const,
+    },
+    {
+      id: "market-12",
+      title: "Will a student perform at the PAU cultural night?",
+      category: "entertainment" as const,
+      description:
+        "Resolves YES if at least one currently enrolled PAU student performs as a featured act at cultural night.",
+      yesPrice: 0.88,
+      noPrice: 0.12,
+      volume: 3200,
+      liquidity: "low" as const,
+      closesAt: new Date("2026-09-20T19:00:00Z"),
       status: "open" as const,
     },
   ];
@@ -72,22 +190,8 @@ async function main() {
     });
   }
 
-  // Market details (matches frontend mock)
-  const marketDetails: Array<{
-    marketId: string;
-    title: string;
-    category: string;
-    subcategory: string;
-    description: string;
-    yesOdds: number;
-    noOdds: number;
-    yesOddsChange: number;
-    noOddsChange: number;
-    volume: number;
-    expiresIn: string;
-    status: "open" | "closed" | "resolved";
-    chartData: Array<{ time: string; value: number }>;
-  }> = [
+  // ── Market Details ────────────────────────────────────────────────────────
+  const marketDetails = [
     {
       marketId: "market-1",
       title: "Will Coupe de Escriva Finals go to extra time?",
@@ -101,7 +205,7 @@ async function main() {
       noOddsChange: -2,
       volume: 45280000,
       expiresIn: "12d : 04h : 22m",
-      status: "open",
+      status: "open" as const,
       chartData: [
         { time: "Day 1", value: 0.45 },
         { time: "Day 2", value: 0.48 },
@@ -128,7 +232,7 @@ async function main() {
       noOddsChange: -2,
       volume: 12400000,
       expiresIn: "3d : 10h : 15m",
-      status: "open",
+      status: "open" as const,
       chartData: [
         { time: "Day 1", value: 0.5 },
         { time: "Day 2", value: 0.52 },
@@ -155,7 +259,7 @@ async function main() {
       noOddsChange: 3,
       volume: 8750000,
       expiresIn: "18h : 30m",
-      status: "open",
+      status: "open" as const,
       chartData: [
         { time: "Day 1", value: 0.55 },
         { time: "Day 2", value: 0.52 },
@@ -169,6 +273,249 @@ async function main() {
         { time: "Day 10", value: 0.38 },
       ],
     },
+    {
+      marketId: "market-4",
+      title: "Will the PAU cafeteria launch the new meal plan this month?",
+      category: "Campus",
+      subcategory: "Campus Life",
+      description:
+        "This market resolves YES if the cafeteria officially rolls out the new meal plan before the end of the month.",
+      yesOdds: 0.41,
+      noOdds: 0.59,
+      yesOddsChange: -1,
+      noOddsChange: 1,
+      volume: 9800000,
+      expiresIn: "8d : 12h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.5 },
+        { time: "Day 2", value: 0.47 },
+        { time: "Day 3", value: 0.45 },
+        { time: "Day 4", value: 0.44 },
+        { time: "Day 5", value: 0.43 },
+        { time: "Day 6", value: 0.42 },
+        { time: "Day 7", value: 0.41 },
+        { time: "Day 8", value: 0.41 },
+        { time: "Day 9", value: 0.41 },
+        { time: "Day 10", value: 0.41 },
+      ],
+    },
+    {
+      marketId: "market-5",
+      title: "Will PAU host an inter-school tournament this semester?",
+      category: "Campus",
+      subcategory: "Sports Events",
+      description:
+        "This market resolves YES if PAU officially announces and hosts an inter-school sports tournament this semester.",
+      yesOdds: 0.74,
+      noOdds: 0.26,
+      yesOddsChange: 3,
+      noOddsChange: -3,
+      volume: 31000000,
+      expiresIn: "45d : 00h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.6 },
+        { time: "Day 2", value: 0.63 },
+        { time: "Day 3", value: 0.65 },
+        { time: "Day 4", value: 0.67 },
+        { time: "Day 5", value: 0.69 },
+        { time: "Day 6", value: 0.7 },
+        { time: "Day 7", value: 0.71 },
+        { time: "Day 8", value: 0.72 },
+        { time: "Day 9", value: 0.73 },
+        { time: "Day 10", value: 0.74 },
+      ],
+    },
+    {
+      marketId: "market-6",
+      title: "Will the PAU Senate election turnout exceed 60%?",
+      category: "Campus",
+      subcategory: "Student Government",
+      description:
+        "This market resolves YES if more than 60% of registered PAU students cast a vote in the upcoming senate election.",
+      yesOdds: 0.52,
+      noOdds: 0.48,
+      yesOddsChange: 1,
+      noOddsChange: -1,
+      volume: 7200000,
+      expiresIn: "6d : 08h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.48 },
+        { time: "Day 2", value: 0.49 },
+        { time: "Day 3", value: 0.5 },
+        { time: "Day 4", value: 0.51 },
+        { time: "Day 5", value: 0.5 },
+        { time: "Day 6", value: 0.51 },
+        { time: "Day 7", value: 0.52 },
+        { time: "Day 8", value: 0.52 },
+        { time: "Day 9", value: 0.52 },
+        { time: "Day 10", value: 0.52 },
+      ],
+    },
+    {
+      marketId: "market-7",
+      title: "Will the second-year macroeconomics midterm average exceed 75%?",
+      category: "Academics",
+      subcategory: "Examinations",
+      description:
+        "This market resolves YES if the class average on the macroeconomics midterm is above 75%.",
+      yesOdds: 0.45,
+      noOdds: 0.55,
+      yesOddsChange: -2,
+      noOddsChange: 2,
+      volume: 5400000,
+      expiresIn: "4d : 06h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.55 },
+        { time: "Day 2", value: 0.53 },
+        { time: "Day 3", value: 0.51 },
+        { time: "Day 4", value: 0.5 },
+        { time: "Day 5", value: 0.49 },
+        { time: "Day 6", value: 0.48 },
+        { time: "Day 7", value: 0.47 },
+        { time: "Day 8", value: 0.46 },
+        { time: "Day 9", value: 0.45 },
+        { time: "Day 10", value: 0.45 },
+      ],
+    },
+    {
+      marketId: "market-8",
+      title: "Will PAU introduce AI electives by next academic year?",
+      category: "Academics",
+      subcategory: "Curriculum",
+      description:
+        "This market resolves YES if PAU officially adds AI or machine learning elective courses to the curriculum for the next academic year.",
+      yesOdds: 0.67,
+      noOdds: 0.33,
+      yesOddsChange: 2,
+      noOddsChange: -2,
+      volume: 4100000,
+      expiresIn: "120d : 00h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.55 },
+        { time: "Day 2", value: 0.57 },
+        { time: "Day 3", value: 0.59 },
+        { time: "Day 4", value: 0.61 },
+        { time: "Day 5", value: 0.62 },
+        { time: "Day 6", value: 0.63 },
+        { time: "Day 7", value: 0.64 },
+        { time: "Day 8", value: 0.65 },
+        { time: "Day 9", value: 0.66 },
+        { time: "Day 10", value: 0.67 },
+      ],
+    },
+    {
+      marketId: "market-9",
+      title: "Will the Naira appreciate below ₦1,400/$ by Q3?",
+      category: "Finance",
+      subcategory: "Currency",
+      description:
+        "This market resolves YES if the official Naira exchange rate drops below ₦1,400 per dollar before Q3 ends.",
+      yesOdds: 0.36,
+      noOdds: 0.64,
+      yesOddsChange: -3,
+      noOddsChange: 3,
+      volume: 22000000,
+      expiresIn: "60d : 00h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.45 },
+        { time: "Day 2", value: 0.43 },
+        { time: "Day 3", value: 0.41 },
+        { time: "Day 4", value: 0.4 },
+        { time: "Day 5", value: 0.39 },
+        { time: "Day 6", value: 0.38 },
+        { time: "Day 7", value: 0.37 },
+        { time: "Day 8", value: 0.37 },
+        { time: "Day 9", value: 0.36 },
+        { time: "Day 10", value: 0.36 },
+      ],
+    },
+    {
+      marketId: "market-10",
+      title: "Will Nigeria's GDP growth exceed 3.5% in 2026?",
+      category: "Finance",
+      subcategory: "Macroeconomics",
+      description:
+        "This market resolves YES if Nigeria's official GDP growth figure for 2026 exceeds 3.5% as reported by the NBS.",
+      yesOdds: 0.55,
+      noOdds: 0.45,
+      yesOddsChange: 1,
+      noOddsChange: -1,
+      volume: 18500000,
+      expiresIn: "200d : 00h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.5 },
+        { time: "Day 2", value: 0.51 },
+        { time: "Day 3", value: 0.52 },
+        { time: "Day 4", value: 0.53 },
+        { time: "Day 5", value: 0.53 },
+        { time: "Day 6", value: 0.54 },
+        { time: "Day 7", value: 0.54 },
+        { time: "Day 8", value: 0.55 },
+        { time: "Day 9", value: 0.55 },
+        { time: "Day 10", value: 0.55 },
+      ],
+    },
+    {
+      marketId: "market-11",
+      title: "Will the PAU End of Year Concert sell out?",
+      category: "Entertainment",
+      subcategory: "Events",
+      description:
+        "This market resolves YES if all tickets for the PAU End of Year Concert are sold before the event date.",
+      yesOdds: 0.71,
+      noOdds: 0.29,
+      yesOddsChange: 4,
+      noOddsChange: -4,
+      volume: 6300000,
+      expiresIn: "75d : 00h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.55 },
+        { time: "Day 2", value: 0.58 },
+        { time: "Day 3", value: 0.61 },
+        { time: "Day 4", value: 0.63 },
+        { time: "Day 5", value: 0.65 },
+        { time: "Day 6", value: 0.66 },
+        { time: "Day 7", value: 0.68 },
+        { time: "Day 8", value: 0.69 },
+        { time: "Day 9", value: 0.7 },
+        { time: "Day 10", value: 0.71 },
+      ],
+    },
+    {
+      marketId: "market-12",
+      title: "Will a student perform at the PAU cultural night?",
+      category: "Entertainment",
+      subcategory: "Events",
+      description:
+        "This market resolves YES if at least one currently enrolled PAU student performs as a featured act at cultural night.",
+      yesOdds: 0.88,
+      noOdds: 0.12,
+      yesOddsChange: 1,
+      noOddsChange: -1,
+      volume: 3200000,
+      expiresIn: "50d : 00h : 00m",
+      status: "open" as const,
+      chartData: [
+        { time: "Day 1", value: 0.8 },
+        { time: "Day 2", value: 0.82 },
+        { time: "Day 3", value: 0.83 },
+        { time: "Day 4", value: 0.84 },
+        { time: "Day 5", value: 0.85 },
+        { time: "Day 6", value: 0.86 },
+        { time: "Day 7", value: 0.86 },
+        { time: "Day 8", value: 0.87 },
+        { time: "Day 9", value: 0.88 },
+        { time: "Day 10", value: 0.88 },
+      ],
+    },
   ];
 
   for (const detail of marketDetails) {
@@ -176,7 +523,6 @@ async function main() {
       where: { marketId: detail.marketId },
       update: {
         ...detail,
-        status: detail.status,
         chartData: detail.chartData as unknown as object,
       },
       create: {
@@ -186,10 +532,11 @@ async function main() {
     });
   }
 
-  // Seed a few portfolio trade history entries (from frontend mock)
+  // ── Trade History ─────────────────────────────────────────────────────────
   const mockTradeHistory = [
     {
       id: "trade-1",
+      marketId: "market-1",
       marketTitle: "Will Coupe de Escriva Finals go to extra time?",
       side: "yes" as const,
       amountInvested: 500.0,
@@ -199,6 +546,7 @@ async function main() {
     },
     {
       id: "trade-2",
+      marketId: "market-2",
       marketTitle: "Will PAU Basketball team win the next home game?",
       side: "no" as const,
       amountInvested: 250.0,
@@ -208,7 +556,8 @@ async function main() {
     },
     {
       id: "trade-3",
-      marketTitle: "Will PAU win the inter-faculty football tournament?",
+      marketId: "market-5",
+      marketTitle: "Will PAU host an inter-school tournament this semester?",
       side: "yes" as const,
       amountInvested: 300.0,
       sharePrice: 0.58,
@@ -217,10 +566,6 @@ async function main() {
     },
   ];
 
-  const titleToMarketId = new Map(
-    marketDetails.map((d) => [d.title, d.marketId] as const),
-  );
-
   for (const t of mockTradeHistory) {
     await prisma.trade.upsert({
       where: { id: t.id },
@@ -228,7 +573,7 @@ async function main() {
       create: {
         id: t.id,
         userId: user.id,
-        marketId: titleToMarketId.get(t.marketTitle) ?? null,
+        marketId: t.marketId,
         marketTitle: t.marketTitle,
         side: t.side === "yes" ? TradeSide.yes : TradeSide.no,
         amountInvested: t.amountInvested,
@@ -238,6 +583,10 @@ async function main() {
       },
     });
   }
+
+  console.log(
+    "✅ Seed complete — 1 user, 12 markets, 12 detail records, 3 trades",
+  );
 }
 
 main()

@@ -1,7 +1,9 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { dashboardNavItems } from "../../constants/navigation";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
   return (
     <aside className="flex min-h-screen w-[290px] shrink-0 flex-col bg-[#020617] text-white">
       <div className="border-b border-r border-red-400/80 px-8 py-8 text-center">
@@ -30,9 +32,12 @@ const Sidebar = () => {
         ))}
       </nav>
 
-      <div className="border-t border-white/10 p-6 text-center text-base text-blue-200">
+      <button
+        onClick={() => navigate("/help")}
+        className="border-t border-white/10 p-6 text-center text-base text-blue-200 transition hover:bg-white/5 hover:text-white"
+      >
         Help
-      </div>
+      </button>
     </aside>
   );
 };
