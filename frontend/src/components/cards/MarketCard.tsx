@@ -22,9 +22,9 @@ const MarketCard = ({ market }: Props) => {
   };
 
   const handleTradeClick = (e: React.MouseEvent, side: "yes" | "no") => {
-    // Stop the click from bubbling up to the card
     e.stopPropagation();
-    navigate(`/markets/${market.id}`);
+
+    navigate(`/markets/${market.id}?side=${side}`);
   };
 
   const colorClass =
@@ -76,6 +76,7 @@ const MarketCard = ({ market }: Props) => {
         >
           YES {market.yesPrice}¢
         </button>
+
         <button
           onClick={(e) => handleTradeClick(e, "no")}
           className="flex-1 rounded-xl bg-purple-100 px-3 py-2 text-sm font-semibold text-purple-700 transition-colors hover:bg-purple-200"
